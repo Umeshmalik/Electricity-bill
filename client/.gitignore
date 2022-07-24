@@ -23,4 +23,5 @@ dist-ssr
 *.njsproj
 .env
 *.sln
+bun.lockb
 *.sw?
