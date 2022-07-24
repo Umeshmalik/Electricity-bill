@@ -20,7 +20,7 @@ const TableComp = () => {
 
     const getData = async (props) => {
         const { limit, page, sort } = props || {};
-        const buildUrl = `${import.meta.env.VITE_SERVER_URL}?${(() => limit ? '&limit=' + limit : '')()}${(() => page ? '&page=' + page : '')()}${((() => sort ? '&sort=' + sort : '')())}`;
+        const buildUrl = `${import.meta.env.VITE_SERVER_ENDPOINT}?${(() => limit ? '&limit=' + limit : '')()}${(() => page ? '&page=' + page : '')()}${((() => sort ? '&sort=' + sort : '')())}`;
         await axios.get(buildUrl)
             .then(res => {
                 const { data = {} } = res;

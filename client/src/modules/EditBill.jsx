@@ -26,7 +26,7 @@ const EditBill = () => {
     }, [])
 
     const getData = async () => {
-        await axios.get(`${import.meta.env.VITE_SERVER_URL}/bill/${params.id}`)
+        await axios.get(`${import.meta.env.VITE_SERVER_ENDPOINT}/bill/${params.id}`)
             .then(res => {
                 const { data } = res;
                 setData(data.data)
@@ -44,7 +44,7 @@ const EditBill = () => {
             setError("Please fill all the fields")
             return
         }
-        await axios.put(`${import.meta.env.VITE_SERVER_URL}/${params.id}/edit`, {
+        await axios.put(`${import.meta.env.VITE_SERVER_ENDPOINT}/${params.id}/edit`, {
             data: {
                 billDate,
                 billPaidDate,
@@ -64,7 +64,7 @@ const EditBill = () => {
             setError("Please fill all the fields")
             return
         }
-        await axios.post(`${import.meta.env.VITE_SERVER_URL}`, {
+        await axios.post(`${import.meta.env.VITE_SERVER_ENDPOINT}`, {
             billDate,
             billPaidDate,
             unitConsumed,

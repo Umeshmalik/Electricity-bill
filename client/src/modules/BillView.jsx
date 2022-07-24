@@ -13,7 +13,7 @@ const BillView = () => {
     }, [])
 
     const getData = async () => {
-        await axios.get(`${import.meta.env.VITE_SERVER_URL}/bill/${params.id}`)
+        await axios.get(`${import.meta.env.VITE_SERVER_ENDPOINT}/bill/${params.id}`)
             .then(res => {
                 const { data } = res;
                 setData(data.data)
@@ -21,7 +21,7 @@ const BillView = () => {
     }
 
     const deleteBill = async () => {
-        await axios.delete(`${import.meta.env.VITE_SERVER_URL}/delete/${params.id}`)
+        await axios.delete(`${import.meta.env.VITE_SERVER_ENDPOINT}/delete/${params.id}`)
             .then(res => {
                 const { data } = res;
                 navigate("/")
