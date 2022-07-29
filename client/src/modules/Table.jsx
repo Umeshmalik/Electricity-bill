@@ -134,7 +134,7 @@ const TableComp = () => {
                             totalPages - page > 2 && <Button style={{ backgroundColor: "white", borderRadius: "5px", margin: "5px" }} > ... </Button>
                         }
                         {
-                            totalPages > 4 && <Button style={{ backgroundColor: page === totalPages ? "rgb(0, 150, 55)" : "white", color: page === 1 ? "whitesmoke" : "#007bff", borderRadius: "5px", margin: "5px" }} onClick={() => getData({ limit: rowsPerPage, page: totalPages, sort: sortBy })}> {totalPages} </Button>
+                            totalPages > 4 && <Button style={{ backgroundColor: page === totalPages ? "rgb(0, 150, 55)" : "white", color: page === {totalPages} ? "whitesmoke" : "#007bff", borderRadius: "5px", margin: "5px" }} onClick={() => getData({ limit: rowsPerPage, page: totalPages, sort: sortBy })}> {totalPages} </Button>
                         }
                     </section>
                 </div>
