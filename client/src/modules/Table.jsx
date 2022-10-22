@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
-import { Table, Box, Paper, TableContainer, TableHead, TableRow, TableCell, TableSortLabel, TablePagination, Button } from '@mui/material';
+import { Table, Box, Paper, TableContainer, TableHead, TableRow, TableCell, TableSortLabel, Button } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import moment from 'moment'
 import { headCells } from "./constants"
@@ -14,8 +14,9 @@ const TableComp = () => {
     const [rowsPerPage, setRowsPerPage] = useState(9);
     const [totalRows, setTotalRows] = useState(0);
     const [sortBy, setSortBy] = useState('billId');
+    const [totalPages, setTotalPages] = useState(0);
     useEffect(() => {
-        getData()
+        getData({ limit: rowsPerPage, page, sort: sortBy });
     }, [])
 
     const getData = async (props) => {
@@ -26,29 +27,31 @@ const TableComp = () => {
                 const { data = {} } = res;
                 setData(data?.data?.docs)
                 setTotalRows(data?.data?.total)
+                setTotalPages(data?.data?.pages)
+                setPage(parseInt(data?.data?.page))
             })
     }
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
-        getData({page: newPage + 1, limit: rowsPerPage, sort: sortBy})
+        getData({ page: newPage + 1, limit: rowsPerPage, sort: sortBy })
     };
 
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
-        getData({limit: parseInt(event.target.value, 10), page: 1, sort: sortBy })
+        getData({ limit: parseInt(event.target.value, 10), page: 1, sort: sortBy })
     };
 
     const onRequestSort = (event, property) => {
-        if ( property !== 'amount' || property === sortBy) return
+        if (property !== 'amount' || property === sortBy) return
         setSortBy('amount')
-        getData({limit: rowsPerPage, page: 1, sort: 'amount'})
+        getData({ limit: rowsPerPage, page: 1, sort: 'amount' })
     }
 
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2, padding: 2 }}>
-                <Button style={{float:'right'}} variant='contained' color="success" onClick={() => navigate('/addBill')}>Add new</Button>
+                <Button style={{ float: 'right' }} variant='contained' color="success" onClick={() => navigate('/addBill')}>Add new</Button>
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}
@@ -56,9 +59,9 @@ const TableComp = () => {
                         size={'medium'}
                     >
                         <EnhancedTableHead
-                            orderBy= {sortBy}
+                            orderBy={sortBy}
                             order="desc"
-                            onRequestSort = {onRequestSort}
+                            onRequestSort={onRequestSort}
                         />
                         <tbody>
                             {data.map((row, index) => {
@@ -72,7 +75,7 @@ const TableComp = () => {
                                         key={row.billId}
                                     >
                                         <TableCell>
-                                            {index+1}
+                                            {index + 1 + ((page - 1) * rowsPerPage)}
                                         </TableCell>
                                         <TableCell
                                             component="th"
@@ -96,15 +99,45 @@ const TableComp = () => {
                         </tbody>
                     </Table>
                 </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[2, 3, 9, 90, 900]}
-                    component="div"
-                    count={totalRows}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
+                <div style={{ height: "50px", display: "flex", justifyContent: "flex-end", alignContent: "center" }}>
+                    <section style={{ backgroundColor: "#007bff", borderRadius: "10px", alignContent: "center", marginRight: "10px"}}>
+                        <select value={rowsPerPage} onChange={handleChangeRowsPerPage} style={{height:"100%",  borderRadius: "10px"}}>
+                            <option value={1}>1 Record</option>
+                            <option value={5}>5 Records</option>
+                            <option value={10}>10 Records</option>
+                            <option value={25}>25 Records</option>
+                        </select>
+                    </section>
+                    <section style={{ backgroundColor: "#007bff", borderRadius: "5px", alignContent: "center" }}>
+                        {
+                            page > 2 && totalPages > 3 && <Button style={{ backgroundColor: page === 1 ? "rgb(0, 150, 55)" : "white", color: page === 1 ? "whitesmoke" : "#007bff", borderRadius: "5px", margin: "5px" }} onClick={() => getData({ limit: rowsPerPage, page: 1, sort: sortBy })}>1</Button>
+                        }
+                        {
+                            page > 3 && <Button style={{ backgroundColor: "white", borderRadius: "5px", margin: "5px" }}>...</Button>
+                        }
+                        {
+                            Array.from({ length: totalPages }, (x, i) => {
+                                const pageNumber = page  + 2 < totalPages ? page : totalPages - 2;
+                                if (pageNumber < 2) return i + 1
+                                else return (pageNumber - 2) + i + 1
+                            }).slice(0, 3).map(p => {
+                                return <Button
+                                    key={p}
+                                    style={{ backgroundColor: page === p ? "rgb(0, 150, 55)" : "white",  color: p === page ? "whitesmoke" : "#007bff", borderRadius: "5px", margin: "5px" }}
+                                    onClick={() => getData({ limit: rowsPerPage, page: p, sort: sortBy })}
+                                >
+                                    {p}
+                                </Button>
+                            })
+                        }
+                        {
+                            totalPages - page > 2 && <Button style={{ backgroundColor: "white", borderRadius: "5px", margin: "5px" }} > ... </Button>
+                        }
+                        {
+                            totalPages > 4 && <Button style={{ backgroundColor: page === totalPages ? "rgb(0, 150, 55)" : "white", color: page === {totalPages} ? "whitesmoke" : "#007bff", borderRadius: "5px", margin: "5px" }} onClick={() => getData({ limit: rowsPerPage, page: totalPages, sort: sortBy })}> {totalPages} </Button>
+                        }
+                    </section>
+                </div>
             </Paper>
         </Box>
     )
